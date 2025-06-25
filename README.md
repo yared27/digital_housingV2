@@ -77,13 +77,16 @@ Admin receives alerts and moderation options
 🤖 ML Integration (Planned)
 Predicts how likely a renter is to pay on time (e.g., “87% reliability”)
 Could integrate with decision-making for owners before approving rentals
+
 ---
+
 🔐 Security & Privacy
 Google OAuth + JWT for authentication
 HTTPS enforced
 Input validation and sanitization
 Rate limiting and brute force protection
 User reports reviewed by admin
+
 ---
 
 ⚙️ CI/CD Pipeline
@@ -92,7 +95,6 @@ User reports reviewed by admin
 🔍 Auto-testing for reliability
 📦 Auto-deployment to cloud
 ♻️ Dockerized backend and frontend
----
 
 ---
 🧰 Tools
@@ -103,7 +105,6 @@ Vercel / Render / Railway
 
 ---
 
----
 🚀 Getting Started
 
 This project is under active development. To set up locally:
