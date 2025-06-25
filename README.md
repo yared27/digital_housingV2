@@ -61,10 +61,8 @@ Trains and deploys a model to predict the likelihood of a renter paying rent on 
   reports: [],
   createdAt
 }
+
 🏠 Property
-js
-Copy
-Edit
 {
   _id,
   title,
@@ -76,10 +74,8 @@ Edit
   available,
   createdAt
 }
+
 💬 Message
-js
-Copy
-Edit
 {
   _id,
   senderId,
@@ -89,9 +85,7 @@ Edit
   isRead
 }
 📹 CallSession
-js
-Copy
-Edit
+
 {
   _id,
   callerId,
@@ -101,9 +95,7 @@ Edit
   status
 }
 📅 Reservation
-js
-Copy
-Edit
+
 {
   _id,
   renterId,
@@ -113,9 +105,6 @@ Edit
   status
 }
 ⭐ Review
-js
-Copy
-Edit
 {
   _id,
   authorId,
@@ -125,9 +114,6 @@ Edit
   createdAt
 }
 🚩 Report
-js
-Copy
-Edit
 {
   _id,
   reporterId,
@@ -137,13 +123,11 @@ Edit
   createdAt
 }
 🔮 PaymentPrediction (Planned ML)
-js
-Copy
-Edit
 {
   renterId,
   predictedPaymentProbability: 0.92
 }
+
 ✨ Feature Breakdown
 ✅ Google Authentication
 Fast and secure login via Google
