@@ -1,112 +1,220 @@
-digital-housing-platform
-📌 What This Project Is About
-I built the Digital Housing Platform to help verified homeowners and renters connect easily and safely. It’s more than just listings — it’s about real conversations with real people. Whether it’s chatting in real time, hopping on a video call, or searching for a home in your village, this platform makes renting feel natural and trustworthy.
-Down the road, I plan to add a smart assistant (using machine learning) that can predict if renters will pay their rent on time, making the whole process even smoother for everyone involved.
+# digital-housing-platform
 
-🎯 Why I Made It
-To create a friendly, real-world way for people to rent homes
+## 📌 Project Overview
+The Digital Housing Platform is a modern web application designed to connect verified homeowners and renters. With real-time chat, video calls, advanced search by village, and Google authentication, the platform creates a more human, seamless housing experience. Future ML integration aims to predict renter payment reliability, while a robust reporting system ensures trust and accountability.
 
-To let folks sign in quickly with Google — no hassle, just start looking
+---
 
-To make chatting and video calls part of the experience, so owners and renters can talk directly
+## 🎯 Project Goals
+- Build a friendly, real-world digital experience for property rental  
+- Enable seamless Google login and secure JSON Web Token (JWT) sessions  
+- Allow verified users to chat and video call in-app  
+- Empower renters to search by village and connect directly with owners  
+- Integrate ML to predict renter reliability (payment likelihood)  
+- Foster safety through mutual reviews and a reporting system  
+- Ensure scalability using Docker, MongoDB, and CI/CD pipelines  
 
-To help renters find homes exactly where they want — down to the village level
+---
 
-To build trust with two-way ratings and an easy reporting system
+## 🧑‍🤝‍🧑 Team Roles
 
-To keep it all running smoothly with modern tech like Docker and CI/CD
+### 👨‍💻 Full Stack Developer  
+Develops both frontend (ReactJS) and backend (Node.js/Express), implements API logic, and manages real-time features.
 
-🧑‍🤝‍🧑 Who’s Behind This
-Full Stack Developer: That’s me! I’m building both the frontend with React and the backend with Node.js and Express, stitching everything together.
+### 🗄️ NoSQL Database Architect  
+Designs MongoDB collections, defines schemas with Mongoose, and ensures optimal querying.
 
-NoSQL Database Architect: I design how data is stored in MongoDB, making sure everything’s efficient and flexible.
+### 🎥 Real-Time Communication Engineer  
+Implements chat and video call features using Socket.io and WebRTC.
 
-Real-Time Communication Engineer: I handle live chat and video calls with Socket.io and WebRTC, so you feel like you’re talking face to face.
+### 🤖 Machine Learning Integrator (Planned)  
+Trains and deploys a model to predict the likelihood of a renter paying rent on time.
 
-Machine Learning Integrator (coming soon!): I’m working on adding smart predictions to help owners decide who to rent to.
+---
 
-💻 What’s Under the Hood
-ReactJS — makes the website fast and interactive
+## 💻 Technology Stack
+- ⚛️ ReactJS – Frontend for dynamic user experience  
+- 🖥️ Node.js + Express – Backend REST API  
+- 🍃 MongoDB (Mongoose) – Flexible NoSQL database  
+- 🔐 Google OAuth + JWT – Secure, user-friendly authentication  
+- 📡 Socket.io – Real-time messaging  
+- 📹 WebRTC / Agora.io – In-app video calls  
+- 🧠 ML (planned) – Predictive model for renter reliability  
+- 🐳 Docker – Environment consistency  
+- 🚀 GitHub Actions – CI/CD pipelines  
+- ☁️ Render / Railway / Vercel – Cloud hosting  
 
-Node.js + Express — the engine running the backend
+---
 
-MongoDB (with Mongoose) — where all the data lives, flexible and scalable
+## 🗂️ Data Model (MongoDB Collections)
 
-Google OAuth + JWT — secure and simple login with your Google account
+### 👤 User
+```js
+{
+  _id,
+  fullName,
+  email,
+  role,
+  isVerified,
+  googleId,
+  rating,
+  reports: [],
+  createdAt
+}
+🏠 Property
+js
+Copy
+Edit
+{
+  _id,
+  title,
+  village,
+  price,
+  description,
+  images,
+  ownerId,
+  available,
+  createdAt
+}
+💬 Message
+js
+Copy
+Edit
+{
+  _id,
+  senderId,
+  receiverId,
+  content,
+  timestamp,
+  isRead
+}
+📹 CallSession
+js
+Copy
+Edit
+{
+  _id,
+  callerId,
+  receiverId,
+  startTime,
+  endTime,
+  status
+}
+📅 Reservation
+js
+Copy
+Edit
+{
+  _id,
+  renterId,
+  propertyId,
+  startDate,
+  endDate,
+  status
+}
+⭐ Review
+js
+Copy
+Edit
+{
+  _id,
+  authorId,
+  targetUserId,
+  rating,
+  comment,
+  createdAt
+}
+🚩 Report
+js
+Copy
+Edit
+{
+  _id,
+  reporterId,
+  reportedUserId,
+  reason,
+  details,
+  createdAt
+}
+🔮 PaymentPrediction (Planned ML)
+js
+Copy
+Edit
+{
+  renterId,
+  predictedPaymentProbability: 0.92
+}
+✨ Feature Breakdown
+✅ Google Authentication
+Fast and secure login via Google
 
-Socket.io — for real-time chat that feels instant
+JWT tokens issued for session management
 
-WebRTC / Agora.io — smooth video calls right in the browser
+💬 Real-Time Communication
+Live chat via Socket.io
 
-Docker — keeps development and production consistent
+In-app video calling using WebRTC or Agora
 
-GitHub Actions — automates testing and deployment
+📍 Village-Based Search
+Renters can find listings by village name
 
-Render / Railway / Vercel — cloud platforms that host the app online
+Results sorted by availability, price, and rating
 
-🗂️ How the Data is Organized
-Users
-Each user has a profile including their name, email, role (renter or owner), verification status, Google account link, ratings, and any reports they may have.
+📅 Reservation & Booking
+Dynamic booking system
 
-Properties
-Owners list homes with details like title, village location, price, description, photos, and availability.
+Date availability checks
 
-Messages
-Chat conversations between users are stored with sender and receiver info, timestamps, and read status.
+Status tracking (pending, confirmed, cancelled)
 
-Call Sessions
-Video calls have records of who called whom, when it started and ended, and the call status.
+⭐ Two-Way Reviews
+Both renters and property owners can rate and comment
 
-Reservations
-All booking details — who rented what, for how long, and the status of that booking.
+Public review profiles
 
-Reviews
-Both renters and owners can leave ratings and comments about each other.
+🚩 User Reporting System
+Renters and owners can report misconduct
 
-Reports
-If something goes wrong, users can report bad behavior — these reports help keep the community safe.
+Admin receives alerts and moderation options
 
-Payment Predictions (coming soon!)
-Smart scores predicting how likely renters are to pay on time, helping owners make informed decisions.
+🤖 ML Integration (Planned)
+Predicts how likely a renter is to pay on time (e.g., “87% reliability”)
 
-✨ What You Can Do With This Platform
-Sign In Easily
-No need to remember a new password — just log in with Google and get started.
+Could integrate with decision-making for owners before approving rentals
 
-Chat & Video Call
-Talk in real time with property owners or renters, ask questions, negotiate, and get to know each other better.
+🔐 Security & Privacy
+Google OAuth + JWT for authentication
 
-Search by Village
-Looking for a home in a specific neighborhood or village? Filter listings easily to find what fits your needs.
+HTTPS enforced
 
-Book & Manage Reservations
-Reserve a place for your desired dates, track your booking status, and manage cancellations if needed.
+Input validation and sanitization
 
-Rate & Review
-After a stay or rental, leave honest feedback to help others make good decisions.
+Rate limiting and brute force protection
 
-Report Issues
-See something suspicious? Report users to keep everyone safe and accountable.
+User reports reviewed by admin
 
-(planned) Smart Predictions
-Get insights on renter reliability powered by machine learning — a little extra peace of mind.
+⚙️ CI/CD Pipeline
+📌 Benefits
+🔍 Auto-testing for reliability
 
-🔐 How We Keep Things Safe
-Secure Google OAuth and JWT tokens protect your account
+📦 Auto-deployment to cloud
 
-All data is sent over HTTPS
+♻️ Dockerized backend and frontend
 
-We validate and sanitize inputs to keep bad actors out
+🧰 Tools
+GitHub Actions
 
-Rate limiting and protections prevent abuse
+Docker
 
-Reports are reviewed to keep the community healthy
+Vercel / Render / Railway
 
-⚙️ Behind the Scenes — CI/CD and DevOps
-Automated testing helps catch bugs before they reach you
+🚀 Getting Started
+This project is under active development. To set up locally:
 
-Docker ensures the app runs the same everywhere
+Clone the repository
 
-GitHub Actions handle continuous integration and deployment
+Install dependencies (npm install or yarn)
 
-Hosted on cloud platforms for reliability and speed
+Configure MongoDB connection and Google OAuth credentials
+
+Run backend and frontend servers
