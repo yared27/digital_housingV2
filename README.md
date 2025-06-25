@@ -47,59 +47,65 @@ Trains and deploys a model to predict the likelihood of a renter paying rent on 
 ---
 
 ✨ Feature Breakdown
+
 ✅ Google Authentication
 Fast and secure login via Google
 JWT tokens issued for session management
----
+
 💬 Real-Time Communication
 Live chat via Socket.io
 In-app video calling using WebRTC or Agora
----
+
 📍 Village-Based Search
 Renters can find listings by village name
 Results sorted by availability, price, and rating
----
+
 📅 Reservation & Booking
+
 Dynamic booking system
 Date availability checks
 Status tracking (pending, confirmed, cancelled)
----
+
 ⭐ Two-Way Reviews
 Both renters and property owners can rate and comment
 Public review profiles
----
+
 🚩 User Reporting System
 Renters and owners can report misconduct
 Admin receives alerts and moderation options
----
+
 🤖 ML Integration (Planned)
 Predicts how likely a renter is to pay on time (e.g., “87% reliability”)
 Could integrate with decision-making for owners before approving rentals
----
+
 🔐 Security & Privacy
 Google OAuth + JWT for authentication
 HTTPS enforced
 Input validation and sanitization
 Rate limiting and brute force protection
 User reports reviewed by admin
----
+
 ⚙️ CI/CD Pipeline
+
 📌 Benefits
 🔍 Auto-testing for reliability
 📦 Auto-deployment to cloud
 ♻️ Dockerized backend and frontend
----
+
 🧰 Tools
+
 GitHub Actions
 Docker
 Vercel / Render / Railway
----
+
 🚀 Getting Started
+
 This project is under active development. To set up locally:
 Clone the repository
 Install dependencies (npm install)
 Configure MongoDB connection and Google OAuth credentials
 Run backend and frontend servers
+
 ---
 
 ## 🗂️ Data Model (MongoDB Collections)
