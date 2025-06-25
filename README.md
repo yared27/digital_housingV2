@@ -122,11 +122,14 @@ Trains and deploys a model to predict the likelihood of a renter paying rent on 
   details,
   createdAt
 }
+
 🔮 PaymentPrediction (Planned ML)
 {
   renterId,
-  predictedPaymentProbability: 0.92
+  predictedPayment: 100%
 }
+
+```
 
 ✨ Feature Breakdown
 ✅ Google Authentication
