@@ -10,7 +10,7 @@ export const userSchema = new monogoose.Schema({
         { type: String, required: true, unique: true },
     phone_number:
         { type: String, required: true, unique: true },
-    password:
+    hash_Password:
         { type: String, required: true },
     role:
         { type: String, enum: ['user', 'admin'], default: 'user' },
@@ -32,4 +32,4 @@ userSchema.index({role: 1, isVerified: 1});
 userSchema.index({ createdAt: -1 });
 userSchema.index({ rating: -1 });
 
-export const User = mongoose.model('User', userSchema);
+export const User = monogoose.model('User', userSchema);
