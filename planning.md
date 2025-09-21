@@ -88,14 +88,14 @@ digital_housingV2/
 │   ├── package.json
 │   ├── src/
 │   └── ...
-├── docker-compose.yml
-├── docker-compose.dev.yml
+├── compose.yml
+├── compose.dev.yml
 └── .env.example
 ```
 
 #### Docker Compose Configuration
 
-**docker-compose.yml** (Production)
+**compose.yml** (Production)
 ```yaml
 version: '3.8'
 
@@ -134,12 +134,14 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     depends_on:
       - mongodb
     networks:
       - app-network
-    volumes:
-      - ./server/uploads:/app/uploads
+    # Note: Using Cloudinary for file storage, no local upload volume needed
 
 volumes:
   mongodb_data:
@@ -149,7 +151,7 @@ networks:
     driver: bridge
 ```
 
-**docker-compose.dev.yml** (Development)
+**compose.dev.yml** (Development)
 ```yaml
 version: '3.8'
 
@@ -186,6 +188,9 @@ services:
       PORT: 5000
       MONGODB_URI: mongodb://mongodb:27017/digital_housing_dev
       JWT_SECRET: dev_jwt_secret_key
+      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
     depends_on:
       - mongodb
     networks:
@@ -193,7 +198,7 @@ services:
     volumes:
       - ./server:/app
       - /app/node_modules
-      - ./server/uploads:/app/uploads
+      # Note: Using Cloudinary for file storage, no local upload volume needed
     command: npm run dev
 
 volumes:
@@ -270,9 +275,11 @@ JWT_EXPIRES_IN=7d
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
 
-# File Upload
+# Cloudinary (File Storage)
+CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
+CLOUDINARY_API_KEY=your_cloudinary_api_key
+CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 UPLOAD_MAX_SIZE=10485760  # 10MB
-UPLOAD_PATH=./uploads
 
 # CORS
 CLIENT_URL=http://localhost:3000
@@ -314,29 +321,29 @@ print('Database initialized successfully!');
 #### Development
 ```bash
 # Start development environment
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f compose.dev.yml up -d
 
 # View logs
-docker-compose -f docker-compose.dev.yml logs -f backend
-docker-compose -f docker-compose.dev.yml logs -f mongodb
+docker compose -f compose.dev.yml logs -f backend
+docker compose -f compose.dev.yml logs -f mongodb
 
 # Stop development environment
-docker-compose -f docker-compose.dev.yml down
+docker compose -f compose.dev.yml down
 
 # Rebuild containers
-docker-compose -f docker-compose.dev.yml up --build
+docker compose -f compose.dev.yml up --build
 ```
 
 #### Production
 ```bash
 # Start production environment
-docker-compose up -d
+docker compose up -d
 
 # Stop production environment
-docker-compose down
+docker compose down
 
 # View production logs
-docker-compose logs -f
+docker compose logs -f
 ```
 
 #### Database Management
@@ -348,18 +355,25 @@ docker exec -it digital_housing_db_dev mongosh
 docker exec digital_housing_db_dev mongodump --archive --gzip --db digital_housing_dev
 
 # Reset database
-docker-compose -f docker-compose.dev.yml down -v
-docker-compose -f docker-compose.dev.yml up -d
+docker compose -f compose.dev.yml down -v
+docker compose -f compose.dev.yml up -d
 ```
 
 ### 📋 Implementation Steps
-1. Create Docker configuration files
-2. Set up environment variables
-3. Configure MongoDB initialization
-4. Test development environment
-5. Verify database connections
-6. Set up production configuration
-7. Document setup process
+1. Create Docker configuration files (`compose.yml`, `compose.dev.yml`)
+2. Set up environment variables (including Cloudinary credentials)
+3. Configure MongoDB initialization script
+4. Set up Cloudinary account and obtain API credentials
+5. Test development environment
+6. Verify database connections and file upload to Cloudinary
+7. Set up production configuration
+8. Document setup process
+
+### 📸 Cloudinary Integration Notes
+- **File Storage**: All property images, user avatars, and chat media files will be stored on Cloudinary
+- **Benefits**: CDN delivery, automatic image optimization, transformation capabilities
+- **Setup Required**: Create Cloudinary account and add credentials to environment variables
+- **Backend Integration**: Use `cloudinary` npm package for uploads and `multer` for handling multipart forms
 
 ---
 
