@@ -1,20 +1,45 @@
-#server/Dockerfile
-FROM node:22
+# Multi-stage build
+FROM node:18-alpine AS base
 
-#set working directory
+# Install dependencies only when needed
+FROM base AS deps
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
+
+# Development stage
+FROM base AS development
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+RUN npm install --include=dev
+
+COPY . .
+EXPOSE 5000
+EXPOSE 9229
+CMD ["npm", "run", "dev"]
+
+# Build stage
+FROM base AS build
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+RUN npm run build
+
+# Production stage
+FROM base AS production
 WORKDIR /app
 
-#copy package.json and package-lock.json
+# Copy built application
+COPY --from=build /app/dist ./dist
+COPY --from=deps /app/node_modules ./node_modules
 COPY package*.json ./
 
-#install dependencies
-RUN npm install
+# Create non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S backend -u 1001
+USER backend
 
-#copy the rest of the server code 
-COPY . .
-
-#expose the port (same as yout .env)
 EXPOSE 5000
-
-#start the app
-CMD ["npm","run","dev" ]
+CMD ["npm", "start"]
