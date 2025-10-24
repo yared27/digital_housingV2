@@ -1,26 +1,79 @@
 "use client";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
-import { FiEye, FiEyeOff  } from "react-icons/fi";
 import { Eye, EyeOff } from "lucide-react";
+import {useSignupMutation} from "@/store/api";
+import {SignupData} from "@/types/auth/signup";
+
 const SignupForm = () => {
-  const [formData, setFormData] = useState({
+
+  const router = useRouter();
+  const [formData, setFormData] = useState<SignupData>({
     firstName: "",
     lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
   });
+  const [signup, { isLoading, isError, isSuccess }] = useSignupMutation();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log(formData);
-    // Submit logic here (e.g., API call)
+    if (isSubmitting || isLoading) return; // prevent double submit
+    if(formData.password !== formData.confirmPassword){
+        alert("Passwords do not match");
+        return;
+    }
+    setIsSubmitting(true);
+    try{
+      // Use the raw mutation result (no .unwrap()) so we can inspect whether RTK Query returned an error object
+      const response = await signup({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        confirmPassword: formData.confirmPassword,
+      });
+
+      // console.debug('rtk mutation response', response);
+      // console.debug('response keys', Object.keys(response));
+
+      // RTK Query mutation returns either { data } or { error } but some shapes include both keys with undefined values.
+      // Check the actual values instead of using the `in` operator.
+      if (response.error) {
+        console.error('mutation returned error shape:', response.error);
+        const err: any = response.error;
+        if (err?.data?.message) {
+          alert(`signup failed: ${err.data.message}`);
+        } else if (err?.error) {
+          alert(`signup failed: ${err.error}`);
+        } else if (err?.status) {
+          alert(`signup failed: status ${err.status}`);
+        } else {
+          alert('signup failed: An unknown error occurred');
+        }
+      } else if (response.data) {
+        console.debug('signup success data', response.data);
+        alert('Signup successful!');
+        router.push('/');
+      } else {
+        // unexpected shape
+        console.error('Unexpected mutation response shape', response);
+        alert('signup failed: An unknown error occurred');
+      }
+    } catch (err) {
+      // handle unexpected exceptions
+      console.error('unexpected exception calling mutation', err);
+      alert('signup failed: An unknown error occurred');
+    }
+      setIsSubmitting(false);
   };
 
   const signInWithGoogle = () => {
@@ -126,7 +179,8 @@ const toggleVisibility = () => setIsVisible(prevState => !prevState);
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-all"
+            disabled={isLoading || isSubmitting}
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-60"
           >
             Sign Up
           </Button>

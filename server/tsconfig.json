@@ -5,10 +5,11 @@
     "outDir": "./dist",
 
     // Environment Settings
-    "module": "NodeNext",
+    "module": "commonjs",
     "target": "ESNext",
-    "moduleResolution": "NodeNext",
-
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     // Node types
     "lib": ["ESNext"],
     "types": ["node"],
@@ -27,5 +28,5 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true
   },
-  "include": ["src"]
+  "include": ["src", "src/scripts"]
 }

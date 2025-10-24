@@ -1,4 +1,5 @@
-import SignupForm from '@/components/SignUpForm';
+import SignupForm from '@/components/auth/SignUpForm';
+
 export default function SignupPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 bg-[url('/images/signup.jpg')] bg-cover bg-center">
