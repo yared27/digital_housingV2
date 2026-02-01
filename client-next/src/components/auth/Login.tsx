@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import {useLoginMutation} from "@/store/api";
 import {LoginData} from "@/types/auth/login";
+
 export const LoginForm = () => {
   const [formData, setFormData] = useState<LoginData>({
     email: "",
@@ -27,7 +28,8 @@ export const LoginForm = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try{
-            await login(formData);
+            await login(formData).unwrap();
+
             alert("Login successful!");
         } catch (error: any) {
             console.error("Login failed:", error);
@@ -40,7 +42,10 @@ export const LoginForm = () => {
             alert(`Login failed: ${message}`);
             }
     }
-
+    const signInWithGoogle = () => {
+        window.open("http://localhost:5000/api/auth/google", "_self");
+    }
+    
     return (
         <div className="flex justify-center items-center h-screen bg-gray-50">
         <Card className="w-[400px] max-w-full shadow-xl rounded-2xl">
@@ -82,9 +87,9 @@ export const LoginForm = () => {
             </form>
         </CardContent>
         <CardFooter className="flex flex-col justify-center pb-6">
-            <Button variant="outline" className="w-full flex items-center justify-center mb-2 gap-2">
+            <Button onClick={signInWithGoogle} variant="outline" className="w-full flex items-center justify-center mb-2 gap-2">
                 <FcGoogle size={20} />
-                Continue with Google
+               {isLoading ? "Loading..." : "Continue with Google"}
             </Button>
             <div className="flex">
                 <p className="text-gray-500">Don't have an account?</p>
