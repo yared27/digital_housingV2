@@ -6,6 +6,7 @@ import Testimonials from "@/components/marketing/Testimonials";
 import CTASection from "@/components/marketing/CTASection";
 import Footer from "@/components/marketing/Footer";
 
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-white text-gray-900">

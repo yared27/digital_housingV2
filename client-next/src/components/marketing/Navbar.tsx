@@ -15,13 +15,13 @@ export default function Navbar() {
           <a href="#features" className="text-sm hover:text-indigo-600">Features</a>
           <a href="#how-it-works" className="text-sm hover:text-indigo-600">How it works</a>
           <a href="#testimonials" className="text-sm hover:text-indigo-600">Testimonials</a>
-          <a href="#cta" className="text-sm hover:text-indigo-600">Get started</a>
+          <a href="/auth/signup" className="text-sm hover:text-indigo-600">Get started</a>
         </nav>
         <div className="flex items-center gap-3">
           <Link href="/auth/login">
             <Button variant="ghost">Sign in</Button>
           </Link>
-          <Link href="#cta">
+          <Link href="/auth/signup">
             <Button>Get started</Button>
           </Link>
         </div>

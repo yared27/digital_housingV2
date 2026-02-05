@@ -22,7 +22,9 @@ export interface IProperty extends Document {
         ownerID: Types.ObjectId;
         isAvailable: boolean;
         isVerified: boolean;
+        
     }
+    propertyImages?: string[];
 };
 
 const propertySchema = new Schema<IProperty>({
@@ -51,7 +53,9 @@ const propertySchema = new Schema<IProperty>({
         ownerID: { type: Schema.Types.ObjectId, required: true },
         isAvailable: { type: Boolean, required: true },
         isVerified: { type: Boolean, required: true },
-    }
+    },
+    propertyImages: [{ type: String }],
+
 }, { timestamps: true });
 const Property = model<IProperty>('Property', propertySchema);
 export default Property;

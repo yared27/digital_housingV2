@@ -8,8 +8,10 @@ import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
 import {useLoginMutation} from "@/store/api";
 import {LoginData} from "@/types/auth/login";
+import { useRouter } from "next/navigation";
 
 export const LoginForm = () => {
+  const router = useRouter();
   const [formData, setFormData] = useState<LoginData>({
     email: "",
     password: "",
@@ -31,6 +33,9 @@ export const LoginForm = () => {
             await login(formData).unwrap();
 
             alert("Login successful!");
+
+            router.push("/");
+            
         } catch (error: any) {
             console.error("Login failed:", error);
             const message =
@@ -45,7 +50,7 @@ export const LoginForm = () => {
     const signInWithGoogle = () => {
         window.open("http://localhost:5000/api/auth/google", "_self");
     }
-    
+
     return (
         <div className="flex justify-center items-center h-screen bg-gray-50">
         <Card className="w-[400px] max-w-full shadow-xl rounded-2xl">
