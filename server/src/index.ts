@@ -25,8 +25,21 @@ app.use(helmet());
 
 app.use(passport.initialize());
 
-app.use(cors({ origin: env.CLIENT_URL || "https://digital-housingv2.vercel.app", credentials: true 
-}));     
+const allowedOrigins = [
+    env.CLIENT_URL,
+    "https://digital-housingv2.vercel.app",
+    "https://digital-housing-v2-phrq8a2p0-yared27s-projects.vercel.app",
+    "https://digital-housing-v2-luz3zwq4x-yared27s-projects.vercel.app/"
+].filter(Boolean) as string[];
+
+app.use(cors({
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        if (allowedOrigins.includes(origin)) return callback(null, true);
+        return callback(new Error('Not allowed by CORS'));
+    },
+    credentials: true,
+}));
 
 app.use(express.json());
 
