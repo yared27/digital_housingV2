@@ -25,7 +25,8 @@ app.use(helmet());
 
 app.use(passport.initialize());
 
-app.use(cors({ origin: env.CLIENT_URL, credentials: true }));
+app.use(cors({ origin: env.CLIENT_URL || "https://digital-housingv2.vercel.app", credentials: true 
+}));     
 
 app.use(express.json());
 
