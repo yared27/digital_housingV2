@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SignupData, SignupResponse } from "@/types/auth/signup";
 import { IUser } from "@/types/user";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL
+const baseUrl = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
 const baseQuery = fetchBaseQuery({ 
     baseUrl,
     credentials: 'include',
@@ -38,21 +38,21 @@ export const api = createApi({
     endpoints : (builder) =>({
          getMe : builder.query<{user:IUser}, void>({
             query : () => ({
-                url : 'api/users/me',
+                url : '/api/users/me',
             }),
             providesTags: ['User', 'Auth'],
         }),
         
         logout: builder.mutation<void, void>({
             query: () => ({
-                url: '/auth/logout',
+                url: '/api/auth/logout',
                 invalidatesTags: ['Auth'],
             }),
         }),
 
         signup: builder.mutation<SignupResponse, SignupData>({
             query : (body) => ({
-                url : '/auth/signUp',
+                url : '/api/auth/signUp',
                 method : 'POST',
                 body
             }),
@@ -60,7 +60,7 @@ export const api = createApi({
 
         login : builder.mutation<{ok:boolean, token:string; user:IUser}, {email:string, password:string}>({
             query : (body) => ({
-                url : 'api/auth/signIn',
+                url : '/api/auth/signIn',
                 method : 'POST',
                 body
             }),
