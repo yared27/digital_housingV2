@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SignupData, SignupResponse } from "@/types/auth/signup";
 import { IUser } from "@/types/user";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+const baseUrl = process.env.NEXT_PUBLIC_API_URL
 const baseQuery = fetchBaseQuery({ 
     baseUrl,
     credentials: 'include',
