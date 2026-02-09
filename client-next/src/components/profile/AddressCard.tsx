@@ -24,10 +24,11 @@ export default function AddressCard({ user, loading }: Props) {
 
   const onSave = async () => {
     await updateMe({
-      ...user,
-      country,
-      city,
-      postalCode,
+      address: {
+        country,
+        city,
+        postalCode,
+      },
     }).unwrap();
     setEditing(false);
   };

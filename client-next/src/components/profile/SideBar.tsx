@@ -5,7 +5,7 @@ import { User, Home, Wallet, Settings } from "lucide-react";
 
 const Sidebar = () => {
   return (
-    <nav className="sticky top-16 rounded-lg border bg-white p-3">
+    <nav className="top-16 rounded-lg border bg-white p-3">
       <ul className="space-y-1 text-sm">
         <li>
           <Link href="/dashboard" className="flex items-center gap-2 rounded px-2 py-2 hover:bg-slate-50">

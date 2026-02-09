@@ -26,7 +26,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className="overflow-y-auto min-h-screen">
         <Providers>
           <AuthProvider>{children}</AuthProvider>
         </Providers>

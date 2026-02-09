@@ -7,7 +7,7 @@ import dotenv from 'dotenv';
 import passport from 'passport';
 import cookieParser from 'cookie-parser';
 import { connectDB } from './db/mongoose';
-import './auth/google';
+import './auth/passport';
 import  {env} from './config/env';
 import healthRouter from './routes/health';
 // import propertiesRouter from './routes/properties';
@@ -31,7 +31,7 @@ app.use(express.json());
 
 app.use(cookieParser());
 
-// app.get('/', (_, res) => res.redirect('/api/health'));
+app.get('/', (_, res) => res.redirect('/api/health'));
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/properties', propertyRouter);
@@ -39,7 +39,6 @@ app.use('/api/properties', propertyRouter);
 app.use('/api/users', userRouter);
 
 app.use('/api/uploads', uploadRouter);
-
 const start = async () => {
     await connectDB(env.MONGODB_URI);
     app.listen(env.PORT, () => {

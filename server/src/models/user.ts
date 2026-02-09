@@ -3,7 +3,13 @@ import { Schema, model, Document,Types } from 'mongoose';
 export interface IUser extends Document {
     fullName: string;
     email: string;
-    phoneNumber?: string;
+        phone?: string;
+        dateOfBirth?: string;
+    address?: {
+        country?: string;
+        city?: string;
+        postalCode?: string;
+    };
     role: 'renter'|'owner'|'admin';
     isAccountVerified: boolean;
     googleId?: string;
@@ -17,7 +23,13 @@ export interface IUser extends Document {
 const userSchema = new Schema<IUser>({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phoneNumber: { type: String },
+        phone: { type: String },
+        dateOfBirth: { type: String },
+    address: {
+        country: { type: String },
+        city: { type: String },
+        postalCode: { type: String },
+    },
     role: { type: String, enum: ['renter', 'owner', 'admin'], default: 'renter' },
     isAccountVerified: { type: Boolean, default: false },
     googleId: { type: String },

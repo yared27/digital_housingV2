@@ -3,7 +3,7 @@
 export const uploadWithSignature = async (file: File): Promise<string> => {
     const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
-    const signRes = await fetch(`${apiBase}/api/uploads/sign`, {
+    let signRes = await fetch(`${apiBase}/api/uploads/sign`, {
         method: "POST",
         credentials: "include",
         headers: {
@@ -11,10 +11,27 @@ export const uploadWithSignature = async (file: File): Promise<string> => {
         },
         body: JSON.stringify({ filename: file.name }),
     });
-    
+
+    if (signRes.status === 401) {
+        const refreshRes = await fetch(`${apiBase}/api/auth/refresh-token`, {
+            method: "POST",
+            credentials: "include",
+        });
+        if (refreshRes.ok) {
+            signRes = await fetch(`${apiBase}/api/uploads/sign`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ filename: file.name }),
+            });
+        }
+    }
+
     if (!signRes.ok) {
         throw new Error("Failed to get upload signature");
-    }   
+    }
     const { signature, timestamp, public_id, folder } = await signRes.json();
 
     const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME!;
