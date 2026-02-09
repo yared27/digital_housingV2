@@ -28,7 +28,9 @@ app.use(passport.initialize());
 const allowedOrigins = [
     env.CLIENT_URL,
     "https://digital-housingv2.vercel.app",
+    "https://digital-housing-v2-git-main-yared27s-projects.vercel.app/",
     "https://digital-housing-v2-phrq8a2p0-yared27s-projects.vercel.app",
+    "https://digital-housing-v2-phrq8a2p0-yared27s-projects.vercel.app",//https://digital-housing-v2-git-main-yared27s-projects.vercel.app/
     "https://digital-housing-v2-luz3zwq4x-yared27s-projects.vercel.app/"
 ].filter(Boolean) as string[];
 
