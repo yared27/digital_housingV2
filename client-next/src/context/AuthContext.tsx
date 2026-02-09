@@ -17,17 +17,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [userLoading, setUserLoading] = useState<boolean>(true);
     useEffect(() => {
         const fetchUser = async () => {
-            let response = await fetch("http://localhost:5000/api/users/me", {
+            let response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/me`, {
                 credentials: "include"
             });
 
             if (response.status === 401) {
-                const refresh = await fetch("http://localhost:5000/api/auth/refresh-token", {
+                const refresh = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/refresh-token`, {
                     method: "POST",
                     credentials: "include",
                 });
                 if (refresh.ok) {
-                    response = await fetch("http://localhost:5000/api/users/me", {
+                    response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/users/me`, {
                         credentials: "include"
                     });
                 }
