@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useUpdateMeMutation } from "@/store/api";
 
 type Props = {
@@ -18,9 +18,18 @@ export default function PersonalInfoCard({ user, loading }: Props) {
 
   const [updateMe, { isLoading: saving }] = useUpdateMeMutation();
 
+  useEffect(() => {
+    setFirstName(user?.fullName?.split(" ")[0] ?? "");
+    setLastName(user?.fullName?.split(" ").slice(1).join(" ") ?? "");
+    setEmail(user?.email ?? "");
+    setPhone(user?.phone ?? "");
+    setDateOfBirth(user?.dateOfBirth ?? "");
+  }, [user]);
+
   const onSave = async () => {
     const name = [firstName, lastName].filter(Boolean).join(" ");
-    await updateMe({ name }).unwrap();
+    console.log("updating name to", name);
+    await updateMe({ fullName: name, phone, dateOfBirth }).unwrap();
     setEditing(false);
   };
 

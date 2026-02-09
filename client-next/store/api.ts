@@ -1,5 +1,4 @@
 "use client";
-import { configureStore } from "@reduxjs/toolkit";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SignupData, SignupResponse } from "@/types/auth/signup";
 import { IUser } from "@/types/user";
@@ -39,9 +38,9 @@ export const api = createApi({
     endpoints : (builder) =>({
          getMe : builder.query<{user:IUser}, void>({
             query : () => ({
-                url : 'api/users/me', 
-                providesTags: ['Auth'],
+                url : 'api/users/me',
             }),
+            providesTags: ['User', 'Auth'],
         }),
         
         logout: builder.mutation<void, void>({
@@ -68,9 +67,18 @@ export const api = createApi({
             invalidatesTags: ['Auth'],
         }),
 
-        updateMe: builder.mutation<{user:IUser}, Partial<{name:string, email:string}>>({
+        updateMe: builder.mutation<
+            { user: IUser },
+            Partial<{
+                fullName: string;
+                phone: string;
+                dateOfBirth: string;
+                avatar: string;
+                address: { country?: string; city?: string; postalCode?: string };
+            }>
+        >({
             query: (body) => ({
-                url: '/api/user/me',
+                url: '/api/users/me',
                 method: 'PUT',
                 body
             }),

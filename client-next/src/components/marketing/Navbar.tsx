@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-30 w-full border-b bg-white/80 backdrop-blur">
+    <header className=" top-0 z-30 w-full border-b bg-white/80 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/" className="flex items-center gap-2">
           <span className="inline-block h-6 w-6 rounded bg-indigo-600" />

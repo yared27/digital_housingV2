@@ -4,10 +4,12 @@ import {env} from "../config/env";
 
 import User, { IUser } from '../models/user';
 
+const googleCallbackUrl = env.GOOGLE_REDIRECT_URL || env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback";
+
 passport.use(new GoogleStrategy({
     clientID: env.GOOGLE_CLIENT_ID,
     clientSecret: env.GOOGLE_CLIENT_SECRET,
-    callbackURL: env.GOOGLE_REDIRECT_URI || "http://localhost:5000/api/auth/google/callback",
+    callbackURL: googleCallbackUrl,
 },  async (_accessToken, _refreshToken, profile, done) => {
     try {
         const email = profile.emails?.[0].value;

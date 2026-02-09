@@ -10,6 +10,15 @@ import { extracAccessToken } from "../utils/cookies";
 const updateSchema = z.object({
     fullName: z.string().optional(),
     avatar: z.string().url().optional(),
+    phone: z.string().optional(),
+    dateOfBirth: z.string().optional(),
+    address: z
+        .object({
+            country: z.string().optional(),
+            city: z.string().optional(),
+            postalCode: z.string().optional(),
+        })
+        .optional(),
 });
 
 export const getMe =  async (req: Request, res: Response) => {

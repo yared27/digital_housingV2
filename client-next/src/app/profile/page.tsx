@@ -22,7 +22,7 @@ export default function ProfilePage() {
             <h1 className="mb-4 text-2xl font-semibold text-slate-800">My Profile</h1>
 
             <div className="space-y-6">
-              <ProfileSummary />
+              <ProfileSummary currentUrl={data?.user?.avatar} user={data?.user} />
               <PersonalInfoCard user={data?.user} loading={isLoading} />
               <AddressCard user={data?.user} loading={isLoading} />
             </div>
