@@ -25,19 +25,22 @@ app.use(helmet());
 
 app.use(passport.initialize());
 
-const allowedOrigins = [
-    env.CLIENT_URL,
-    "https://digital-housingv2.vercel.app",
-    "https://digital-housing-v2-git-main-yared27s-projects.vercel.app/",
-    "https://digital-housing-v2-phrq8a2p0-yared27s-projects.vercel.app",
-    "https://digital-housing-v2-phrq8a2p0-yared27s-projects.vercel.app",//https://digital-housing-v2-git-main-yared27s-projects.vercel.app/
-    "https://digital-housing-v2-luz3zwq4x-yared27s-projects.vercel.app/"
-].filter(Boolean) as string[];
+const normalizeOrigin = (value?: string) => (value ? value.replace(/\/$/, '') : undefined);
+const allowedOrigins = new Set(
+    [
+        normalizeOrigin(env.CLIENT_URL),
+        "https://digital-housingv2.vercel.app",
+    ].filter(Boolean) as string[]
+);
+const vercelPreviewPattern = /^https:\/\/[a-z0-9-]+\.vercel\.app$/i;
 
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) return callback(null, true);
+        const normalized = normalizeOrigin(origin);
+        if (normalized && (allowedOrigins.has(normalized) || vercelPreviewPattern.test(normalized))) {
+            return callback(null, true);
+        }
         return callback(new Error('Not allowed by CORS'));
     },
     credentials: true,
