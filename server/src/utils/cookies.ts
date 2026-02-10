@@ -9,7 +9,7 @@ export const setAuthCookie = (res: Response, accessToken: string, refreshToken: 
     const common = {
         httpOnly: true,
         secure: isProd,
-        sameSite: isProd ? 'lax' : 'lax',
+        sameSite: isProd ? 'none' : 'lax',
         domain: env.COOKIE_DOMAIN || undefined,
         path: '/', // Ensure cookies are sent for all routes
     } as const;
