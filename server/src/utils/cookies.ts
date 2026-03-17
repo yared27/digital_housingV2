@@ -1,10 +1,7 @@
 import { Request, Response } from "express";
-import dotenv from 'dotenv'
 import { env } from "../config/env";
-import path from "path";
-dotenv.config()
 
-const isProd = env.NODE_ENV === 'production' || process.env.NODE_ENV === 'production';
+const isProd = env.NODE_ENV === 'production';
 export const setAuthCookie = (res: Response, accessToken: string, refreshToken: string) => {
     const common = {
         httpOnly: true,
@@ -25,8 +22,16 @@ export const setAuthCookie = (res: Response, accessToken: string, refreshToken: 
 } 
 
 export const clearAuthCookies = (res: Response) => {
-    res.clearCookie(env.ACCESS_TOKEN_COOKIE);
-    res.clearCookie(env.REFRESH_TOKEN_COOKIE);
+    const common = {
+        httpOnly: true,
+        secure: isProd,
+        sameSite: isProd ? 'none' : 'lax',
+        domain: env.COOKIE_DOMAIN || undefined,
+        path: '/',
+    } as const;
+
+    res.clearCookie(env.ACCESS_TOKEN_COOKIE, common);
+    res.clearCookie(env.REFRESH_TOKEN_COOKIE, common);
 }
 
 export const extracAccessToken = (req: Request): string | null => {

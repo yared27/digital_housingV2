@@ -1,16 +1,14 @@
 import User from "../models/user";
-import { SignInRequest } from "../types/auth/signIn";
 import type { Request, Response } from "express";
-import jwt from "jsonwebtoken";
+import crypto from "crypto";
 import bcrypt from "bcryptjs";
-import dotenv from 'dotenv'
 import { z } from "zod";
 import { env } from "../config/env";
-import { signAccessToken, signRefreshToken } from "../utils/jwt";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt";
 import { setAuthCookie, clearAuthCookies } from "../utils/cookies";
-import { tr } from "zod/v4/locales";
-import { clear } from "console";
-dotenv.config()
+
+const hashRefreshToken = (value: string) =>
+    crypto.createHash("sha256").update(value).digest("hex");
 
 const signUpSchema =  z.object({
     firstName: z.string().min(1),
@@ -54,12 +52,14 @@ export const signUp = async (req: Request, res: Response) => {
         const payload = { sub: user.id, role: user.role };
         const access = signAccessToken(payload);
         const refresh = signRefreshToken(payload);
+        user.refreshTokenHash = hashRefreshToken(refresh);
+        user.refreshTokenIssuedAt = new Date();
+        await user.save();
         const { password: _pwd, ...userWithoutPassword } = user.toObject();
         const responseBody = { user: userWithoutPassword };
         console.log('signUp success for:', email);
         console.log('responding', { status: 201, body: responseBody });
         setAuthCookie(res, access, refresh);
-        const { password: _pwd2, ...userWithoutPassword2 } = user.toObject();
         return res.status(201).json({ user: userWithoutPassword });
 
     } catch (error: any) {
@@ -92,25 +92,42 @@ export const signIn = async (req: Request, res: Response) => {
     const access = signAccessToken(payload);
     const refresh = signRefreshToken(payload);
 
+    user.refreshTokenHash = hashRefreshToken(refresh);
+    user.refreshTokenIssuedAt = new Date();
+    await user.save();
+
     setAuthCookie(res, access, refresh);
     const { password: _pwd, ...userWithoutPassword } = user.toObject();
     res.json({ user: userWithoutPassword });
 };
 
 export const refreshToken = async (req: Request, res: Response) => {
-    const refreshTokenCookieName = env.REFRESH_TOKEN_COOKIE || 'refreshToken';
-    const refreshToken = req.cookies?.[refreshTokenCookieName];
+    const refreshToken = req.cookies?.[env.REFRESH_TOKEN_COOKIE];
     if (!refreshToken) {
+        clearAuthCookies(res);
         return res.status(401).json({ message: "No refresh token provided" });
     }
-    const jwtSecret = env.REFRESH_TOKEN_SECRET;
-    if (!jwtSecret) {
-        return res.status(500).json({ message: "JWT secret not configured" });
-    }
     try {
-        const payload: any = jwt.verify(refreshToken, jwtSecret);
+        const payload = verifyRefreshToken<{ sub?: string; role?: string }>(refreshToken);
+        if (!payload.sub || !payload.role) {
+            clearAuthCookies(res);
+            return res.status(401).json({ message: "Invalid refresh token" });
+        }
+
+        const user = await User.findById(payload.sub).select('+refreshTokenHash +refreshTokenIssuedAt');
+        const providedHash = hashRefreshToken(refreshToken);
+
+        if (!user || !user.refreshTokenHash || user.refreshTokenHash !== providedHash) {
+            clearAuthCookies(res);
+            return res.status(401).json({ message: "Invalid refresh token" });
+        }
+
         const newAccessToken = signAccessToken({ sub: payload.sub, role: payload.role });
         const newRefreshToken = signRefreshToken({ sub: payload.sub, role: payload.role });
+        user.refreshTokenHash = hashRefreshToken(newRefreshToken);
+        user.refreshTokenIssuedAt = new Date();
+        await user.save();
+
         setAuthCookie(res, newAccessToken, newRefreshToken);
         return res.status(200).json({ ok: true });
     } catch (error) {
@@ -118,7 +135,24 @@ export const refreshToken = async (req: Request, res: Response) => {
         return res.status(401).json({ message: "Invalid refresh token" });
     }
 }
-export const logout = (req: Request, res: Response) => {
+export const logout = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies?.[env.REFRESH_TOKEN_COOKIE];
+
+    if (refreshToken) {
+        try {
+            const payload = verifyRefreshToken<{ sub?: string }>(refreshToken);
+            if (payload.sub) {
+                const user = await User.findById(payload.sub).select('+refreshTokenHash +refreshTokenIssuedAt');
+                if (user && user.refreshTokenHash === hashRefreshToken(refreshToken)) {
+                    user.refreshTokenHash = null;
+                    user.refreshTokenIssuedAt = null;
+                    await user.save();
+                }
+            }
+        } catch (error) {
+        }
+    }
+
     clearAuthCookies(res);
     res.status(204).send();
 }

@@ -1,14 +1,12 @@
 import { signAccessToken, signRefreshToken } from "../utils/jwt";
 import { setAuthCookie, clearAuthCookies } from "../utils/cookies";
 import type { Request, Response } from "express";
-import jwt from "jsonwebtoken";
-import dotenv from 'dotenv'
+import crypto from "crypto";
 import User from "../models/user";
+import { env } from "../config/env";
 
-
-dotenv.config()
 export const googleCallback = async (req:Request, res:Response) => {
-    const googleUser = req.user as typeof User extends infer T ? any : any;
+  const googleUser = req.user as any;
     
     const userId = googleUser?._id ?? googleUser?.id;
     if (!userId) {
@@ -23,9 +21,18 @@ export const googleCallback = async (req:Request, res:Response) => {
     //   maxAge: 24 * 60 * 60 * 1000, 
     //   sameSite: "lax",             
     // });
+    const hash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+    const user = await User.findById(userId).select('+refreshTokenHash +refreshTokenIssuedAt');
+
+    if (user) {
+      user.refreshTokenHash = hash;
+      user.refreshTokenIssuedAt = new Date();
+      await user.save();
+    }
+
     setAuthCookie(res, accessToken, refreshToken);
 
-    res.redirect(`${process.env.CLIENT_URL || "http://localhost:3000"}`);
+    res.redirect(`${env.CLIENT_URL || "http://localhost:3000"}`);
 }
 
 export const onFailure = (req:Request, res:Response) => {

@@ -1,11 +1,7 @@
-import * as jwt from "jsonwebtoken";
 import type { Request, Response, NextFunction } from "express";
-import dotenv from 'dotenv'
-import { env } from "../config/env";
-import { signAccessToken, signRefreshToken} from "../utils/jwt";
-import { setAuthCookie, extracAccessToken } from "../utils/cookies";
+import { verifyAccessToken } from "../utils/jwt";
+import { extracAccessToken } from "../utils/cookies";
 
-dotenv.config()
 
 export interface AuthenticatedRequest extends Request {
     user?: { sub:any
@@ -17,8 +13,11 @@ export const requireAuth = (req: Request, res: Response, next: NextFunction) => 
         return res.status(401).json({ message: "Unauthorized" });
     }
     try {
-        const Payload = jwt.verify(token, env.JWT_SECRET) as { sub: any, role: string };
-        req.user = Payload;
+        const payload = verifyAccessToken<{ sub?: string; role?: string }>(token);
+        if (!payload.sub) {
+            return res.status(401).json({ message: "Invalid or expired token" });
+        }
+        req.user = payload;
         next();
     } catch (err) {
         return res.status(401).json({ message: "Invalid or expired token" });
