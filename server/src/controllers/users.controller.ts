@@ -1,11 +1,7 @@
 import { Request, Response } from "express";
 import User from "../models/user";
 import { Types } from "mongoose";
-import jwt from "jsonwebtoken";
 import { z } from "zod";
-import { ca } from "zod/v4/locales";
-import { error } from "console";
-import { extracAccessToken } from "../utils/cookies";
 
 const updateSchema = z.object({
     fullName: z.string().optional(),
@@ -23,20 +19,8 @@ const updateSchema = z.object({
 
 export const getMe =  async (req: Request, res: Response) => {
     try {
-        const token = extracAccessToken(req);
-        if (!token) {
-            return res.status(401).json({ message: 'Not authenticated' });
-        }
-
-        let payload: any;
-        try {
-            payload = jwt.verify(token, process.env.JWT_SECRET!);
-        } catch (err) {
-            console.error('Invalid token in getMe:', err);
-            return res.status(401).json({ message: 'Invalid token' });
-        }
-
-        const userId = payload.sub ?? payload.userId;
+        const reqUser = req.user as any;
+        const userId = reqUser?.sub ?? reqUser?.userId ?? reqUser?.id;
         if (!userId) return res.status(401).json({ message: 'Not authenticated' });
 
         const user = Types.ObjectId.isValid(String(userId))
@@ -59,7 +43,8 @@ export const updateMe = async (req:Request, res:Response) => {
         return res.status(400).json({ message: "Invalid request data", errors: parsed.error.issues });
     }
 
-    const userId  = (req as any).user?.sub;
+    const reqUser = req.user as any;
+    const userId = reqUser?.sub ?? reqUser?.userId ?? reqUser?.id;
     if (!userId) {
         return res.status(401).json({ message: "Not authenticated" });
     }

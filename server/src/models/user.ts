@@ -18,6 +18,8 @@ export interface IUser extends Document {
     reports?: Types.ObjectId[];
     password?: string;
     isUserIdentityVerified?: boolean;
+    refreshTokenHash?: string | null;
+    refreshTokenIssuedAt?: Date | null;
 }
 
 const userSchema = new Schema<IUser>({
@@ -38,6 +40,8 @@ const userSchema = new Schema<IUser>({
     reports: [{ type: Schema.Types.ObjectId, ref: 'Report' }],
     password: { type: String },
     isUserIdentityVerified: { type: Boolean, default: false },
+    refreshTokenHash: { type: String, default: null, select: false },
+    refreshTokenIssuedAt: { type: Date, default: null, select: false },
 }, { timestamps: true });
 
 const User = model<IUser>('User', userSchema);

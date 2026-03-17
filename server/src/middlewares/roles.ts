@@ -1,6 +1,4 @@
 import { Response, NextFunction, Request } from "express";
-
-
 export const requireRole = (allowed: Array<'renter' | 'owner' | 'admin'>) => {
     return (req: Request, res: Response, next: NextFunction) => {
         const userRole = (req.user as any)?.role;
@@ -13,3 +11,7 @@ export const requireRole = (allowed: Array<'renter' | 'owner' | 'admin'>) => {
         next();
     };
 }
+
+export const requireAdmin = requireRole(['admin']);
+export const requireOwner = requireRole(['owner']);
+export const requireRenter = requireRole(['renter']);

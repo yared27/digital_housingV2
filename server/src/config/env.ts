@@ -1,16 +1,15 @@
-import {z} from 'zod';
+import { z } from 'zod';
 import dotenv from 'dotenv';
-import { Console } from 'console';
 dotenv.config();
 
 const Schema = z.object({
-    NODE_ENV: z.string().default('development'),
+    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
     PORT : z.coerce.number().default(5000),
     MONGODB_URI: z.string().min(1, 'MONGO_URI is required'),
     JWT_SECRET: z.string().min(10),
     REFRESH_TOKEN_SECRET: z.string().min(10),
-    REFRESH_TOKEN_COOKIE: z.string().min(10).default('refreshToken'),
-    ACCESS_TOKEN_COOKIE: z.string().default('token'),
+    REFRESH_TOKEN_COOKIE: z.string().trim().min(1).default('refresh_token'),
+    ACCESS_TOKEN_COOKIE: z.string().trim().min(1).default('access_token'),
     COOKIE_DOMAIN: z.string().optional(),
     CLIENT_URL: z.string().url().default('http://localhost:3000'),
     GOOGLE_CLIENT_ID: z.string().min(1, 'GOOGLE_CLIENT_ID is required'),
