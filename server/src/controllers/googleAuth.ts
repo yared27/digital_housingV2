@@ -1,4 +1,4 @@
-import { signAccessToken, signRefreshToken } from "../utils/jwt";
+import { signAccessToken, signRefreshToken, verifyRefreshToken } from "../utils/jwt";
 import { setAuthCookie, clearAuthCookies } from "../utils/cookies";
 import type { Request, Response } from "express";
 import crypto from "crypto";
@@ -22,11 +22,15 @@ export const googleCallback = async (req:Request, res:Response) => {
     //   sameSite: "lax",             
     // });
     const hash = crypto.createHash("sha256").update(refreshToken).digest("hex");
+    const refreshPayload = verifyRefreshToken(refreshToken);
+    const issuedAt = typeof refreshPayload.iat === "number"
+      ? new Date(refreshPayload.iat * 1000)
+      : new Date();
     const user = await User.findById(userId).select('+refreshTokenHash +refreshTokenIssuedAt');
 
     if (user) {
       user.refreshTokenHash = hash;
-      user.refreshTokenIssuedAt = new Date();
+      user.refreshTokenIssuedAt = issuedAt;
       await user.save();
     }
 
