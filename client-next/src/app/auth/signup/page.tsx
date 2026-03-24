@@ -1,14 +1,17 @@
-import SignupForm from '@/components/auth/SignUpForm';
+import SignupForm from '../../../components/auth/SignUpForm';
+import SiteHeader from '@/components/common/SiteHeader';
+import SiteFooter from '@/components/common/SiteFooter';
 
 export default function SignupPage() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4 bg-[url('/images/signup.jpg')] bg-cover bg-center">
-      <div className="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl gap-8">
-       
-        <div className="flex-1">
+    <main className="min-h-screen bg-slate-50 text-slate-900">
+      <SiteHeader />
+      <section className="mx-auto flex w-full max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+        <div className="w-full flex justify-center">
           <SignupForm />
         </div>
-      </div>
-    </div>
+      </section>
+      <SiteFooter />
+    </main>
   );
 }

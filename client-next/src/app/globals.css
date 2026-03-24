@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+	--ui-bg: 248 250 252;
+	--ui-surface: 255 255 255;
+	--ui-border: 226 232 240;
+	--ui-text: 15 23 42;
+	--ui-muted: 71 85 105;
+	--ui-brand: 15 23 42;
+	--ui-brand-hover: 30 41 59;
+	--ui-brand-contrast: 255 255 255;
+	--ui-focus: 14 116 144;
+}
+
 html,
 body {
 	height: 100%;
@@ -9,5 +21,48 @@ body {
 
 body {
 	overflow-y: auto;
+	background-color: rgb(var(--ui-bg));
+	color: rgb(var(--ui-text));
+	font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, Noto Sans, sans-serif;
+}
+
+a {
+	text-underline-offset: 3px;
+}
+
+*:focus-visible {
+	outline: 2px solid rgb(var(--ui-focus));
+	outline-offset: 2px;
+}
+
+.ui-surface {
+	background-color: rgb(var(--ui-surface));
+}
+
+.ui-border {
+	border-color: rgb(var(--ui-border));
+}
+
+.ui-text {
+	color: rgb(var(--ui-text));
+}
+
+.ui-muted {
+	color: rgb(var(--ui-muted));
+}
+
+.ui-btn-primary {
+	background-color: rgb(var(--ui-brand));
+	color: rgb(var(--ui-brand-contrast));
+}
+
+.ui-btn-primary:hover {
+	background-color: rgb(var(--ui-brand-hover));
+}
+
+.ui-focus-ring:focus-visible {
+	outline: 2px solid rgb(var(--ui-focus));
+	outline-offset: 2px;
+	box-shadow: 0 0 0 3px rgba(var(--ui-focus), 0.2);
 }
 

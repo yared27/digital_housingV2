@@ -1,48 +1,55 @@
 # digital-housing-platform
 
 ## 📌 Project Overview
+
 The Digital Housing Platform is a modern web application designed to connect verified homeowners and renters. With real-time chat, video calls, advanced search by village, and Google authentication, the platform creates a more human, seamless housing experience. Future ML integration aims to predict renter payment reliability, while a robust reporting system ensures trust and accountability.
 
 ---
 
 ## 🎯 Project Goals
-- Build a friendly, real-world digital experience for property rental  
-- Enable seamless Google login and secure JSON Web Token (JWT) sessions  
-- Allow verified users to chat and video call in-app  
-- Empower renters to search by village and connect directly with owners  
-- Integrate ML to predict renter reliability (payment likelihood)  
-- Foster safety through mutual reviews and a reporting system  
-- Ensure scalability using Docker, MongoDB, and CI/CD pipelines  
+
+- Build a friendly, real-world digital experience for property rental
+- Enable seamless Google login and secure JSON Web Token (JWT) sessions
+- Allow verified users to chat and video call in-app
+- Empower renters to search by village and connect directly with owners
+- Integrate ML to predict renter reliability (payment likelihood)
+- Foster safety through mutual reviews and a reporting system
+- Ensure scalability using Docker, MongoDB, and CI/CD pipelines
 
 ---
 
 ## 🧑‍🤝‍🧑 Team Roles
 
-### 👨‍💻 Full Stack Developer  
+### 👨‍💻 Full Stack Developer
+
 Develops both frontend (ReactJS) and backend (Node.js/Express), implements API logic, and manages real-time features.
 
-### 🗄️ NoSQL Database Architect  
+### 🗄️ NoSQL Database Architect
+
 Designs MongoDB collections, defines schemas with Mongoose, and ensures optimal querying.
 
-### 🎥 Real-Time Communication Engineer  
+### 🎥 Real-Time Communication Engineer
+
 Implements chat and video call features using Socket.io and WebRTC.
 
-### 🤖 Machine Learning Integrator (Planned)  
+### 🤖 Machine Learning Integrator (Planned)
+
 Trains and deploys a model to predict the likelihood of a renter paying rent on time.
 
 ---
 
 ## 💻 Technology Stack
-- ⚛️ ReactJS – Frontend for dynamic user experience  
-- 🖥️ Node.js + Express – Backend REST API  
-- 🍃 MongoDB (Mongoose) – Flexible NoSQL database  
-- 🔐 Google OAuth + JWT – Secure, user-friendly authentication  
-- 📡 Socket.io – Real-time messaging  
-- 📹 WebRTC / Agora.io – In-app video calls  
-- 🧠 ML (planned) – Predictive model for renter reliability  
-- 🐳 Docker – Environment consistency  
-- 🚀 GitHub Actions – CI/CD pipelines  
-- ☁️ Render / Railway / Vercel – Cloud hosting  
+
+- ⚛️ ReactJS – Frontend for dynamic user experience
+- 🖥️ Node.js + Express – Backend REST API
+- 🍃 MongoDB (Mongoose) – Flexible NoSQL database
+- 🔐 Google OAuth + JWT – Secure, user-friendly authentication
+- 📡 Socket.io – Real-time messaging
+- 📹 WebRTC / Agora.io – In-app video calls
+- 🧠 ML (planned) – Predictive model for renter reliability
+- 🐳 Docker – Environment consistency
+- 🚀 GitHub Actions – CI/CD pipelines
+- ☁️ Render / Railway / Vercel – Cloud hosting
 
 ---
 
@@ -104,6 +111,7 @@ User reports reviewed by admin
 ♻️ Dockerized backend and frontend
 
 ---
+
 🧰 Tools
 
 GitHub Actions
@@ -120,11 +128,47 @@ Install dependencies (npm install)
 Configure MongoDB connection and Google OAuth credentials
 Run backend and frontend servers
 
+### Local Development with Docker Compose
+
+1. Copy environment files:
+
+- Server: create `server/.env` with MongoDB, auth, and Cloudinary secrets.
+- Client: create `client-next/.env.local` with frontend public env vars.
+
+2. Run development stack:
+
+```bash
+docker compose -f compose.dev.yml up --build
+```
+
+3. Open apps:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000`
+
+4. Stop stack:
+
+```bash
+docker compose -f compose.dev.yml down
+```
+
+### Required Next.js Environment Variables
+
+Set these in `client-next/.env.local`:
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:5000
+NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
+NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME=your_cloud_name
+NEXT_PUBLIC_CLOUDINARY_API_KEY=your_cloudinary_api_key
+```
+
 ---
 
 ## 🗂️ Data Model (MongoDB Collections)
 
 ### 👤 User
+
 ```js
 {
   _id,

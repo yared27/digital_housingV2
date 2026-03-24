@@ -35,8 +35,8 @@ export const googleCallback = async (req:Request, res:Response) => {
     }
 
     setAuthCookie(res, accessToken, refreshToken);
-
-    res.redirect(`${env.CLIENT_URL || "http://localhost:3000"}`);
+  const clientBase = (env.CLIENT_URL || "http://localhost:3000").replace(/\/$/, "");
+  res.redirect(`${clientBase}/auth/callback`);
 }
 
 export const onFailure = (req:Request, res:Response) => {

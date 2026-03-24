@@ -6,6 +6,7 @@ import { extracAccessToken } from "../utils/cookies";
 export interface AuthenticatedRequest extends Request {
     user?: { sub:any
 }}
+
 // If you want strong typing for req.user, consider adding a global declaration file that extends Express.Request.
 export const requireAuth = (req: Request, res: Response, next: NextFunction) => {
     const token = extracAccessToken(req);

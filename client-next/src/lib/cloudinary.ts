@@ -1,7 +1,7 @@
 
 
 export const uploadWithSignature = async (file: File): Promise<string> => {
-    const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL;
+    const apiBase = (process.env.NEXT_PUBLIC_API_BASE_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
 
     let signRes = await fetch(`${apiBase}/api/uploads/sign`, {
         method: "POST",

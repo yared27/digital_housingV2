@@ -1,14 +1,17 @@
 "use client";
+
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-import {useSignupMutation} from "@/store/api";
-import {SignupData} from "@/types/auth/signup";
+import { useSignupMutation } from "@/store/api";
+import { SignupData } from "@/types/auth/signup";
+import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 const SignupForm = () => {
-
   const router = useRouter();
   const [formData, setFormData] = useState<SignupData>({
     firstName: "",
@@ -17,23 +20,25 @@ const SignupForm = () => {
     password: "",
     confirmPassword: "",
   });
-  const [signup, { isLoading, isError, isSuccess }] = useSignupMutation();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [signup, { isLoading }] = useSignupMutation();
+  const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setErrorMessage("");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting || isLoading) return; // prevent double submit
-    if(formData.password !== formData.confirmPassword){
-        alert("Passwords do not match");
-        return;
+    setErrorMessage("");
+
+    if (formData.password !== formData.confirmPassword) {
+      setErrorMessage("Passwords do not match.");
+      return;
     }
-    setIsSubmitting(true);
-    try{
-      // Use the raw mutation result (no .unwrap()) so we can inspect whether RTK Query returned an error object
+
+    try {
       const response = await signup({
         firstName: formData.firstName,
         lastName: formData.lastName,
@@ -42,167 +47,114 @@ const SignupForm = () => {
         confirmPassword: formData.confirmPassword,
       });
 
-      // console.debug('rtk mutation response', response);
-      // console.debug('response keys', Object.keys(response));
-
-      // RTK Query mutation returns either { data } or { error } but some shapes include both keys with undefined values.
-      // Check the actual values instead of using the `in` operator.
       if (response.error) {
-        console.error('mutation returned error shape:', response.error);
         const err: any = response.error;
-        if (err?.data?.message) {
-          alert(`signup failed: ${err.data.message}`);
-        } else if (err?.error) {
-          alert(`signup failed: ${err.error}`);
-        } else if (err?.status) {
-          alert(`signup failed: status ${err.status}`);
-        } else {
-          alert('signup failed: An unknown error occurred');
-        }
-      } else if (response.data) {
-        console.debug('signup success data', response.data);
-        alert('Signup successful!');
-        router.push('/');
-      } else {
-        // unexpected shape
-        console.error('Unexpected mutation response shape', response);
-        alert('signup failed: An unknown error occurred');
+        setErrorMessage(err?.data?.message || err?.error || "Signup failed. Please try again.");
+        return;
       }
-    } catch (err) {
-      // handle unexpected exceptions
-      console.error('unexpected exception calling mutation', err);
-      alert('signup failed: An unknown error occurred');
+
+      router.replace("/dashboard");
+    } catch (error: any) {
+      setErrorMessage(error?.data?.message || "Signup failed. Please try again.");
     }
-      setIsSubmitting(false);
   };
 
   const signInWithGoogle = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/api/auth/google`;
+    const apiBase = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
+    window.location.href = `${apiBase}/api/auth/google`;
   };
 
-const [isVisible, setIsVisible] = useState(false);
-const toggleVisibility = () => setIsVisible(prevState => !prevState);
-
   return (
-    <div className="flex items-center justify-center min-h-screen px-6">
-      <div className="w-full max-w-md bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="text-3xl font-extrabold text-center text-gray-900 mb-6">
-          Create an Account
-        </h2>
+    <Card className="w-full max-w-lg rounded-2xl border border-slate-200 bg-white shadow-lg">
+      <CardHeader>
+        <h2 className="text-2xl font-semibold tracking-tight text-slate-900">Create your account</h2>
+        <p className="text-sm text-slate-500">Start browsing verified listings in minutes.</p>
+      </CardHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              First Name
-            </label>
-            <input
-              type="text"
-              name="firstName"
-              placeholder="John"
-              value={formData.firstName}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 focus:border-blue-500 focus:ring focus:ring-blue-100"
-              required />
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="firstName">First name</Label>
+              <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="lastName">Last name</Label>
+              <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
+            </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Last Name
-            </label>
-            <input
-              type="text"
-              name="lastName"
-              placeholder="Doe"
-              value={formData.lastName}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 focus:border-blue-500 focus:ring focus:ring-blue-100"
-              required />
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <Input id="email" type="email" name="email" value={formData.email} onChange={handleChange} required />
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Email
-            </label>
-            <input
-              type="email"
-              name="email"
-              placeholder="you@example.com"
-              value={formData.email}
-              onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 focus:border-blue-500 focus:ring focus:ring-blue-100"
-              required />
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
+            <div className="relative">
+              <Input
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((prev) => !prev)}
+                className="ui-focus-ring absolute inset-y-0 right-2 inline-flex items-center text-slate-500 hover:text-slate-700"
+                aria-label={showPassword ? "Hide password" : "Show password"}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
           </div>
 
-          <div className="relative">
-            <label className="block text-sm font-medium text-gray-700">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type={isVisible ? "text" : "password"}
-              className="w-full text-sm text-slate-600 bg-white border border-slate-300 appearance-none rounded-lg ps-3.5 pe-10 py-2.5 outline-none focus:bg-white focus:border-indigo-400 focus:ring-2 focus:ring-indigo-100"
-              placeholder="Enter your password..."
-              aria-label="Password"
-              value={formData.password}
-              onChange={handleChange}
-              required />
-            <button
-              className="absolute inset-y-0  top-1/2 end-0 flex  z-20 px-2.5 cursor-pointer text-gray-400 rounded-e-md focus:outline-none focus-visible:text-indigo-500 hover:text-indigo-500 transition-colors"
-              type="button"
-              onClick={toggleVisibility}
-              aria-label={isVisible ? "Hide password" : "Show password"}
-              aria-pressed={isVisible}
-              aria-controls="password"
-            >
-              {isVisible ? (
-                <EyeOff size={20} aria-hidden="true" />
-              ) : (
-                <Eye size={20} aria-hidden="true" />
-              )}
-            </button>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">
-              Confirm Password
-            </label>
-            <input
-              type={isVisible ? "text" : "password"}
+          <div className="space-y-2">
+            <Label htmlFor="confirmPassword">Confirm password</Label>
+            <Input
+              id="confirmPassword"
               name="confirmPassword"
-              placeholder="********"
+              type={showPassword ? "text" : "password"}
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="mt-1 w-full rounded-lg border border-gray-300 bg-gray-100 px-4 py-2 focus:border-blue-500 focus:ring focus:ring-blue-100"
-              required />
+              required
+            />
           </div>
 
-          <Button
-            type="submit"
-            disabled={isLoading || isSubmitting}
-            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition-all disabled:opacity-60"
-          >
-            Sign Up
+          {errorMessage ? (
+            <p className="rounded-md border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700" role="alert">
+              {errorMessage}
+            </p>
+          ) : null}
+
+          <Button type="submit" disabled={isLoading} className="ui-btn-primary w-full">
+            {isLoading ? "Creating account..." : "Create account"}
           </Button>
         </form>
+      </CardContent>
 
-        <div className="my-6 text-center text-gray-500 text-sm">or</div>
-
-        <Button
-          onClick={signInWithGoogle}
-          className="w-full flex items-center justify-center gap-3 border border-gray-300 bg-white text-gray-700 font-medium py-2 rounded-lg hover:bg-gray-100 transition-all"
-        >
-          <FcGoogle className="text-xl" /> Continue with Google
+      <CardFooter className="flex flex-col gap-3">
+        <Button onClick={signInWithGoogle} variant="outline" className="w-full">
+          <FcGoogle className="text-lg" />
+          Continue with Google
         </Button>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
+        <p className="text-sm text-slate-600">
           Already have an account?{" "}
-          <a href="/login" className="text-blue-600 hover:underline font-medium">
-            Log in
-          </a>
+          <button
+            type="button"
+            onClick={() => router.push("/auth/login")}
+            className="font-medium text-slate-900 underline underline-offset-4"
+          >
+            Sign in
+          </button>
         </p>
-      </div>
-    </div>
+      </CardFooter>
+    </Card>
   );
 };
 
