@@ -7,11 +7,11 @@ export type SignupData = {
 };
 
 export interface SignupResponse {
-  id: string;
-  token: string;
   user: {
-    id: string;
-    name: string;
+    _id?: string;
+    id?: string;
+    fullName: string;
     email: string;
+    role: "renter" | "owner" | "admin";
   };
 }

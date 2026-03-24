@@ -13,7 +13,9 @@ import healthRouter from './routes/health';
 // import propertiesRouter from './routes/properties';
 import  authRouter from './routes/auth';
 import propertyRouter from './routes/properties';
+import bookingRouter from './routes/bookings';
 import userRouter from './routes/users';
+import adminRouter from './routes/admin';
 import uploadRouter from './routes/uploads';
 // import { errorHandler } from './middlewares/errorHandler';
 
@@ -53,9 +55,13 @@ app.use(cookieParser());
 app.get('/', (_, res) => res.redirect('/api/health'));
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
+// Mount the auth router at `/auth` for backward compatibility with older clients
+app.use('/auth', authRouter);
 app.use('/api/properties', propertyRouter);
+app.use('/api/bookings', bookingRouter);
 // app.use('/api/properties', propertiesRouter);
 app.use('/api/users', userRouter);
+app.use('/api/admin', adminRouter);
 
 app.use('/api/uploads', uploadRouter);
 const start = async () => {

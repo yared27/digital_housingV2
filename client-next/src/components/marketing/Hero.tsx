@@ -1,47 +1,60 @@
-"use client";
-import GoogleCTAButton from "./GoogleCTAButton";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import PageSection from "@/components/common/PageSection";
 
-export default function Hero() {
+type HeroProps = {
+  isAuthed?: boolean;
+};
+
+export default function Hero({ isAuthed }: HeroProps) {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-indigo-50 to-white">
-      <div className="mx-auto max-w-6xl px-4 py-20 md:py-28">
-        <div className="grid gap-10 md:grid-cols-2 md:items-center">
-          <div>
-            <h1 className="text-4xl font-bold tracking-tight md:text-5xl">
-              Find your perfect home in minutes
-            </h1>
-            <p className="mt-4 text-lg text-gray-700">
-              Discover verified listings, chat with owners, and book confidently — all in one
-              platform. Built for speed, safety, and simplicity.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-3">
-              <GoogleCTAButton />
-              <Button
-                variant="outline"
-                onClick={() => {
-                  const el = document.getElementById("features");
-                  el?.scrollIntoView({ behavior: "smooth" });
-                }}
-              >
-                Explore features
+    <PageSection className="bg-gradient-to-b from-slate-50 to-white py-16 sm:py-20">
+      <div className="grid items-center gap-10 lg:grid-cols-2">
+        <div>
+          <p className="inline-flex rounded-full border ui-border bg-slate-100 px-3 py-1 text-xs font-medium ui-muted">
+            Trusted rental workflows for renters and owners
+          </p>
+          <h1 className="mt-5 text-4xl font-semibold tracking-tight text-slate-900 sm:text-5xl">
+            Find verified homes and book with confidence.
+          </h1>
+          <p className="mt-5 max-w-xl text-base leading-7 text-slate-600">
+            Digital Housing helps renters discover quality properties and lets owners manage listings, bookings, and profile trust signals in one place.
+          </p>
+
+          <div className="mt-8 flex flex-wrap gap-3">
+            <Button asChild size="lg" className="ui-btn-primary">
+              <Link href="/properties">Browse Properties</Link>
+            </Button>
+            {isAuthed ? (
+              <Button asChild size="lg" variant="outline">
+                <Link href="/dashboard">Go to Dashboard</Link>
               </Button>
-            </div>
-            <div className="mt-6 flex items-center gap-4 text-sm text-gray-600">
-              <span>• Verified properties</span>
-              <span>• Real-time chat</span>
-              <span>• Secure bookings</span>
-            </div>
+            ) : (
+              <Button asChild size="lg" variant="outline">
+                <Link href="/auth/login">Sign in</Link>
+              </Button>
+            )}
           </div>
-          <div className="rounded-xl border bg-white p-4 shadow-sm">
-            {/* Placeholder illustration / hero image */}
-            <div className="aspect-[16/10] w-full rounded-md bg-gradient-to-br from-indigo-100 to-indigo-50" />
-            <div className="mt-3 text-sm text-gray-600">
-              Map-based search, instant messaging, and booking calendar — ready to go.
-            </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs text-slate-500">Secure auth</p>
+            <p className="mt-2 text-lg font-semibold text-slate-900">Cookie-based sessions</p>
+            <p className="mt-2 text-sm text-slate-600">Reliable authentication with role-aware access.</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <p className="text-xs text-slate-500">Verified listings</p>
+            <p className="mt-2 text-lg font-semibold text-slate-900">Quality properties</p>
+            <p className="mt-2 text-sm text-slate-600">Browse trustworthy property details and media.</p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:col-span-2">
+            <p className="text-xs text-slate-500">Fast booking flow</p>
+            <p className="mt-2 text-lg font-semibold text-slate-900">Request booking, track status, move in faster</p>
+            <p className="mt-2 text-sm text-slate-600">From browse to confirmation with clear states and updates.</p>
           </div>
         </div>
       </div>
-    </section>
+    </PageSection>
   );
 }
